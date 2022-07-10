@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:instagram_flutter/resources/auth_methods.dart';
 import 'package:instagram_flutter/utils/colors.dart';
 import 'package:instagram_flutter/widgets/text_field_input.dart';
 
@@ -27,7 +28,8 @@ class _SignupScreenState extends State<SignupScreen> {
     _usernameContriller.dispose();
   }
 
-  Widget build(BuildContext context) {
+  @override
+  build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -49,6 +51,31 @@ class _SignupScreenState extends State<SignupScreen> {
               const SizedBox(
                 height: 64,
               ),
+              //ciula widgit to accept and show our selected file
+              Stack(
+                children: [
+                  const CircleAvatar(
+                    radius: 50,
+                    //backgroundColor: Colors.white,
+                    backgroundImage: NetworkImage(
+                        'https://www.kindpng.com/picc/m/382-3825510_flat-people-icon-png-transparent-png.png'),
+                  ),
+                  Positioned(
+                    bottom: -10,
+                    left: 60,
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.add_a_photo,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 64,
+              ),
+
               //text field input for user name
               TextfieldInput(
                 textEditingController: _usernameContriller,
@@ -88,7 +115,15 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
               //button login
               InkWell(
-                onTap: () {},
+                onTap: () async {
+                  String res = await AuthMethods().signUpUser(
+                    email: _emailController.text,
+                    password: _passwordContriller.text,
+                    username: _usernameContriller.text,
+                    bio: _bioController.text,
+                  );
+                  print(res);
+                },
                 child: Container(
                   width: double.infinity,
                   alignment: Alignment.center,
@@ -101,7 +136,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     color: blueColor,
                   ),
-                  child: const Text('Log in'),
+                  child: const Text('Sign up'),
                 ),
               ),
               const SizedBox(
