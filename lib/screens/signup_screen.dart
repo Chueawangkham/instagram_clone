@@ -1,10 +1,14 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:instagram_flutter/resources/auth_methods.dart';
 import 'package:instagram_flutter/utils/colors.dart';
+import 'package:instagram_flutter/utils/utils.dart';
 import 'package:instagram_flutter/widgets/text_field_input.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -18,6 +22,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passwordContriller = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameContriller = TextEditingController();
+  Uint8List? _image;
 
   @override
   void dispose() {
@@ -28,9 +33,17 @@ class _SignupScreenState extends State<SignupScreen> {
     _usernameContriller.dispose();
   }
 
+  void SelectImage() async {
+    Uint8List im = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = im;
+    });
+  }
+
   @override
   build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -54,17 +67,23 @@ class _SignupScreenState extends State<SignupScreen> {
               //ciula widgit to accept and show our selected file
               Stack(
                 children: [
-                  const CircleAvatar(
-                    radius: 50,
-                    //backgroundColor: Colors.white,
-                    backgroundImage: NetworkImage(
-                        'https://www.kindpng.com/picc/m/382-3825510_flat-people-icon-png-transparent-png.png'),
-                  ),
+                  _image != null
+                      ? CircleAvatar(
+                          radius: 60,
+                          //backgroundColor: Colors.white,
+                          backgroundImage: MemoryImage(_image!),
+                        )
+                      : const CircleAvatar(
+                          radius: 60,
+                          //backgroundColor: Colors.white,
+                          backgroundImage: NetworkImage(
+                              'https://miro.medium.com/max/512/1*7tlP1ph61ompULJdycVJlQ.png'),
+                        ),
                   Positioned(
                     bottom: -10,
                     left: 60,
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: SelectImage,
                       icon: const Icon(
                         Icons.add_a_photo,
                       ),
@@ -121,6 +140,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     password: _passwordContriller.text,
                     username: _usernameContriller.text,
                     bio: _bioController.text,
+                    //file:
                   );
                   print(res);
                 },
